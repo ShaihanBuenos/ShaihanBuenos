@@ -1,5 +1,6 @@
 ### Hi there, my name is Shaihan Buenos
 ####  📚 I am a Software Enginner Student at PUCRS. 
+####  Work at Dell Technologies
 ####  💻 Also I´m always trying to improve my skills, and learn new things.   
 
 Skills: JAVA / REACT / JS / HTML / CSS / SQL / DART / FLUTTER / C# / .NET CORE
