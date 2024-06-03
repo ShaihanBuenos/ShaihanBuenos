@@ -1,5 +1,4 @@
 ### Hi there, my name is Shaihan Buenos
-####  📚 I am a Software Engineer Student at PUCRS. 
 ####  Work at ADP Brasil Labs
 ####  💻 Also I´m always trying to improve my skills, and learn new things.   
 
