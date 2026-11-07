@@ -1,0 +1,218 @@
+# Opções de stack, hospedagem e domínio para o site pessoal
+
+Levantamento factual para a sessão de decisão do portfólio (ticket "Opções de stack, hospedagem e domínio"). Fontes consultadas em **2026-11-07**: documentação oficial, registros públicos (RDAP/WHOIS, registro npm) e páginas dos próprios fornecedores. Nada foi assinado, comprado ou acessado com login. O que não pôde ser confirmado em fonte primária está marcado como **não verificado**.
+
+Contexto: site pessoal com blog em Markdown/MDX, pt-BR + en, RSS, modo escuro, custo mensal zero ou quase zero. As referências de estilo do ticket usam os stacks indicados: `joaoac.com` serve assets em `/_astro/` (Astro) e `yudiganeko.com` em `/_next/static` (Next.js) [95].
+
+## Resumo
+
+- **Domínios:** `shaihanbuenos.com`, `shaihanbuenos.dev`, `shaihan.dev`, `shaihanbuenos.com.br` e `shaihan.com.br` retornaram **HTTP 404 no RDAP das registries** (não constam como registrados) [76–80]. Para `shaihanbuenos.me` não há RDAP (o host `rdap.nic.me` não resolve e a IANA não lista RDAP para `.me`); o WHOIS oficial `whois.nic.me` respondeu "Domain not found." [81–84].
+- **Preço anual:** `.com.br` R$ 40,00 no Registro.br [85]; na Porkbun `.com` US$ 11,81, `.dev` US$ 12,87 (US$ 8,75 no 1º ano), `.me` US$ 17,27 [93]; Cloudflare Registrar vende a preço de custo (registry + ICANN), mas os valores só aparecem no painel — **não verificado** [88–89]. O atacado `.com` da Verisign sobe de US$ 10,26 para US$ 10,97 em 1º/11/2026 [91]; a taxa ICANN é US$ 0,20 por transação [92].
+- **Frameworks:** Astro (7.4.7) e Hugo (0.169.0) têm i18n de rotas nativo; Eleventy (3.1.8) tem plugin oficial embutido; Next.js (16.4.5) **não** tem i18n no App Router e, em exportação estática, perde `redirects`, `Proxy` e o loader de imagens padrão [1–7, 17, 19, 23, 31]. MDX de primeira classe só em Astro e Next.js; Hugo não suporta MDX [11, 20, 25, 32].
+- **Hospedagem:** GitHub Pages, Vercel Hobby, Cloudflare (Pages/Workers) e Netlify Free hospedam site estático com domínio próprio e HTTPS automático a custo zero. Diferenças: GitHub Pages não tem previews por PR; Vercel Hobby é só para uso pessoal não comercial; Netlify Free dá 300 créditos/mês e cada deploy de produção custa 15; Cloudflare cobra zero por requisições a assets estáticos [40, 47, 59, 69].
+
+## Frameworks
+
+| Critério | Astro | Next.js (export estático) | Hugo | Eleventy |
+|---|---|---|---|---|
+| Versão atual / último major | 7.4.7 (2026-11-05); 7.0.0 em 2026-06-22 [1] | 16.4.5 (2026-11-03); 16.0.0 em 2025-10-22 [2] | v0.169.0 (2026-10-27); não há 1.0 [6] | 3.1.8 (2026-11-03); 3.0.0 em 2024-10-01 [3] |
+| i18n de rotas nativo | **Sim**: `i18n.locales`, `defaultLocale`, `routing.prefixDefaultLocale`, `redirectToDefaultLocale`, `fallback` [7, 8] | **Não** no App Router: padrão manual `app/[lang]` + `generateStaticParams`; detecção via `Proxy` não existe no export; i18n do Pages Router é "unsupported" no export [17–19] | **Sim**: `languages`, `defaultContentLanguage`, `defaultContentLanguageInSubdir`, tradução por sufixo de arquivo ou por diretório [23, 24] | **Sim (plugin embutido)**: `I18nPlugin`, `defaultLanguage`, pastas `/en/`, `/pt-br/`, filtros `locale_url`/`locale_links`; não traduz strings [31] |
+| Conteúdo / MDX | Content collections (`glob()` lê Markdown, MDX, Markdoc, JSON, YAML, TOML; schema Zod); MDX via `@astrojs/mdx` [10, 11] | `@next/mdx` (`mdx-components.tsx` obrigatório); frontmatter **não** suportado por padrão [20] | Markdown (Goldmark), HTML, Org nativos; sem MDX [25] | Markdown nativo; MDX via extensão custom com `@mdx-js/mdx` + React, ESM-only (v3.0+) [32] |
+| RSS | `@astrojs/rss` + endpoint `src/pages/rss.xml.js` [12] | Sem helper; Route Handler com `dynamic = 'force-static'` gera o arquivo no build [17] | Nativo: feeds de home, seção, taxonomia e termo por padrão [26] | Plugin oficial `@11ty/eleventy-plugin-rss` (`feedPlugin`: Atom/RSS/JSON) [33] |
+| Imagens | `<Image/>`/`<Picture/>` (`astro:assets`), Sharp, no build; Markdown otimizado [13] | Loader padrão **não suportado** no export; `loaderFile` custom ou `unoptimized` [17, 21] | Nativo: Resize/Fit/Fill/Crop/Filter, saída WebP [27] | Plugin oficial `@11ty/eleventy-img` (Sharp, AVIF/WebP) [34] |
+| Saída estática | Padrão (`output: 'static'`); `build.format: 'directory'` → `/x/index.html` [8] | `output: 'export'` → `out/`; `trailingSlash: true` gera `/x/index.html` [17] | Gerador estático em Go, binário pré-compilado [29, 30] | Gerador estático em Node [35] |
+| Curva para dev backend que conhece React | HTML + expressões "similar to JSX"; React só onde quiser (ilhas) [14, 15] | É React de ponta a ponta [16] | Go templates (`html/template`) [28] | Nunjucks/Liquid/JS; MDX exige React [32, 35] |
+
+### Astro
+
+Locais em pastas (`src/pages/pt-br/`); com `prefixDefaultLocale: false` (padrão) o idioma padrão fica sem prefixo e os demais recebem `/[locale]/` [7]. `redirectToDefaultLocale` "configures whether or not the home URL (/) generated by src/pages/index.astro will redirect" [8]; a documentação não detalha esse redirect em build estático, e a regra geral para redirects estáticos é gerar HTML com `<meta http-equiv="refresh">` [9]. Componentes React são integração oficial, viram HTML estático por padrão e hidratam só com diretivas `client:*` [15]. Guias oficiais de deploy: GitHub Pages (`withastro/action`, `site`/`base`, `public/CNAME`) [44]; Vercel (sem adaptador, detecção automática) [52]; Cloudflare (Workers com `assets.directory: "./dist"`, sem adaptador) [65, 66]; Netlify (build `npm run build`, publish `dist`) [75].
+
+### Next.js (exportação estática)
+
+Além do que está na tabela, o export não suporta rotas dinâmicas sem `generateStaticParams`, cookies, `rewrites`, `headers`, ISR, Draft Mode e Server Actions [17]. O guia de i18n do App Router usa `Proxy` para redirecionar `/` ao idioma do navegador — indisponível no export; resta `app/[lang]` com `generateStaticParams` gerando `/pt-br/...` e `/en/...` [19]. Frontmatter YAML em MDX exige `remark-frontmatter`/`gray-matter` ou `export const metadata` [20]. Deploy: template oficial `nextjs/deploy-github-pages` (Settings > Pages > Source: GitHub Actions) [17, 22]; Vercel "zero-configuration" [51]; Cloudflare Pages com preset "Next.js (Static HTML Export)" (`npx next build`, diretório `out`) [58]; Netlify com publish directory `out` — a visão geral da Netlify ainda cita `next export`, removido no Next 14 em favor de `output: 'export'` [73, 17].
+
+### Hugo
+
+Multilíngue nativo com `languages`, tradução por sufixo (`about.pt-br.md`) ou por diretório, `translationKey` e strings em `i18n/` com fallback ao idioma padrão [23, 24]. RSS e imagens embutidos [26, 27]; AsciiDoc/Pandoc/rST só via executáveis externos e MDX não é mencionado [25]. Binários pré-compilados; Go só para compilar da fonte ou Hugo Modules [30]. Templates em Go `html/template` [28], modelo mental distante de JSX (opinião deste levantamento).
+
+### Eleventy
+
+Plugin i18n "bundled with Eleventy" (v2.0+), `page.lang`, `locale_url`, `locale_links`; "does not localize that content's strings" [31]. MDX só via extensão com `@mdx-js/mdx` + `react-dom/server`, ESM-only, parser Remark distinto do markdown-it [32]. Docs listam 3.1.8 como estável e 4.0.0-alpha como canary [35].
+
+### Menções breves
+
+- **SvelteKit** 3.1.1 (3.0.0 em 2026-10-01) [4]: `adapter-static` pré-renderiza "your entire site as a collection of static files" com `prerender = true`; `paths.base` para GitHub Pages [36]. i18n nativo: **não verificado**.
+- **Nuxt** 4.6.4 (4.0.0 em 2025-07-15) [5]: i18n via módulo separado ("I18n module for your Nuxt project powered by Vue I18n") [37].
+- **Modo escuro** independe do framework: no Tailwind a variante `dark` usa `prefers-color-scheme` por padrão, com toggle manual via `@custom-variant dark` [38].
+
+## Hospedagem
+
+| Critério | GitHub Pages | Vercel Hobby | Cloudflare Pages / Workers | Netlify Free |
+|---|---|---|---|---|
+| Preço | Grátis em repositório público no GitHub Free [39] | US$ 0 [45] | Grátis [54, 60] | US$ 0 [67] |
+| Banda / requisições | Soft limit 100 GB/mês; site ≤ 1 GB [40] | 100 GB Fast Data Transfer e 1M requisições CDN/mês [45, 47] | Pages: limites não listam banda [54]; Workers: "Requests to static assets are free and unlimited" [59, 60] | 300 créditos/mês; banda 20 créditos/GB, requisições 2 créditos/10k [69] |
+| Builds | Soft limit 10/h (não vale para workflow Actions próprio); timeout 10 min [40] | 100 deploys/dia, 100 builds/h, 45 min/build, 1 concorrente [46] | Pages: 500/mês, 1 concorrente, 20 min [54]; Workers Builds: 3.000 min/mês, 1 concorrente, 20 min [62] | Deploy de produção = 15 créditos; previews/branch deploys não medidos; 1 concorrente [69] |
+| Sites | 1 site de usuário por conta; 1 por repositório [39] | 200 projetos; 50 domínios/projeto [46] | 100 projetos Pages; 100 domínios/projeto [54] | 500 projetos [69] |
+| Domínio próprio + HTTPS | Apex (A/ALIAS/ANAME) e subdomínio (CNAME); Let's Encrypt, "Enforce HTTPS" [41, 42] | Let's Encrypt automático, renovado 14–30 dias antes do vencimento [50] | Workers: exige zona ativa na Cloudflare, cria DNS e certificado [63]; Pages: apex exige zona Cloudflare, subdomínio aceita CNAME externo [56]; Universal SSL grátis [64] | "Custom domains with SSL"; Let's Encrypt automático [69, 72] |
+| Deploy via repositório GitHub | Branch ou GitHub Actions [39, 44] | Sim; Hobby **não** conecta repositórios de organizações GitHub [46, 49] | Sim (Pages e Workers Builds) [57, 61] | Sim [71, 75] |
+| Previews | Não documentado (um site por repositório) [39] | Branches não produtivas e PRs, "All plans, including Hobby" [48] | Pages: ilimitados, `<branch>.<projeto>.pages.dev` [54, 55]; Workers Builds: preview URL por branch [61] | Deploy Previews por PR, `deploy-preview-N--site.netlify.app` [71] |
+| Cláusula de uso | Não pode ser hospedagem de negócio/e-commerce/SaaS nem transações sensíveis [40] | "Hobby teams are restricted to non-commercial personal use only" (anúncios, afiliados e site pago contam como comercial; doações não) [47] | Nenhuma cláusula encontrada nas docs consultadas — **não verificado** | Nenhuma cláusula encontrada nas docs de planos — **não verificado** |
+
+### GitHub Pages
+
+Repositórios públicos no GitHub Free; privados exigem Pro/Team/Enterprise [39]. É "a static site hosting service that takes HTML, CSS, and JavaScript files straight from a repository" [39], sem redirect server-side: a raiz `/` precisa ser uma página (meta refresh ou escolha de idioma). **Rotas i18n limpas funcionam**: `/pt-br/` e `/en/` são diretórios com `index.html`, que Astro produz por padrão (`build.format: 'directory'`) [8] e Next.js com `trailingSlash: true` [17]; `404.html` personalizado é suportado [43]. Recomenda-se `www` + apex com redirecionamento automático entre eles e verificação do domínio contra takeover [41].
+
+### Vercel (Hobby)
+
+Inclusos 100 GB de transferência, 1M requisições CDN, 1M invocações de função, 5 mil transformações de imagem/mês e 1 assento [45, 47]; 200 projetos, 100 deploys/dia, 45 min por build, 1 build concorrente, 50 domínios por projeto [46]. Projeto Hobby não pode ser ligado a repositório de organização GitHub; repositório pessoal funciona [46, 49]. "Our Hobby plan is for personal, non-commercial use" [45]: portfólio sem anúncios cabe; receber pagamento para criar ou hospedar o site, ou exibir anúncios, não cabe [47].
+
+### Cloudflare (Pages e Workers)
+
+A Cloudflare orienta: "Start new projects with Workers" [53]. Em Workers com static assets, a requisição a arquivo estático é gratuita e ilimitada e não há custo de armazenamento; o Free cobre 100 mil invocações/dia do Worker em si, irrelevante para site 100% estático [59, 60]. Workers Builds (Free): 3.000 minutos/mês, 1 build concorrente, previews para branches não produtivas [61, 62]. Domínio próprio em Workers exige "an active Cloudflare zone", ou seja, DNS na Cloudflare [63]. Pages continua operando (500 builds/mês, 20 mil arquivos, 25 MiB por arquivo, previews ilimitados) [54, 55]. Guias oficiais: Astro em Workers (`npm create cloudflare@latest -- my-astro-app --framework=astro`) [65] e em Pages (preset `npm run build` / `dist`) [57]; Next.js estático em Pages [58] — para Next em Workers a Cloudflare recomenda `vinext`, "which also supports static exports" [58].
+
+### Netlify (Free)
+
+300 créditos/mês com limite rígido e sem recarga; ao esgotar, "all of your web projects (sites/apps) are paused" até o próximo ciclo [69, 70]. Deploy previews, branch deploys e builds falhos não consomem créditos [69]. Conta deste levantamento: 300 créditos = 20 deploys de produção **ou** 10 deploys + 7,5 GB de banda — apertado para quem publica com frequência. Cartão de crédito no Free: **não verificado**.
+
+## Domínios
+
+| Domínio | Checagem (2026-11-07, UTC) | Leitura | Preço anual (fonte) | Exigências |
+|---|---|---|---|---|
+| `shaihanbuenos.com` | RDAP Verisign → **404** (corpo vazio), 21:44 [76] | Não registrado | Porkbun US$ 11,81 (registro = renovação) [93]; Cloudflare: atacado US$ 10,97 a partir de 1º/11/2026 [91] + US$ 0,20 ICANN [92] ≈ US$ 11,17 (cálculo; painel **não verificado**) [88–89] | Cloudflare Registrar exige nameservers da Cloudflare [89] |
+| `shaihanbuenos.dev` | RDAP Google Registry → **404** "shaihanbuenos.dev not found", 21:44 [77] | Não registrado | Porkbun US$ 8,75 no 1º ano, US$ 12,87 regular [93]; Cloudflare **não verificado** | `.dev` está na lista HSTS preload: "making HTTPS required on all connections" [94]; os 4 hosts dão HTTPS automático |
+| `shaihan.dev` | RDAP Google Registry → **404** "shaihan.dev not found", 21:44 [78] | Não registrado | idem `.dev` | idem |
+| `shaihanbuenos.com.br` | RDAP Registro.br → **404**, 21:44 [79] | Não registrado | R$ 40,00/ano [85]; tabela plurianual **não verificada** (página carrega via JavaScript) | Pessoa física: nome completo e CPF (CGI.br/RES/2008/008, art. 4º); 2 a 26 caracteres (art. 3º) [86] |
+| `shaihan.com.br` | RDAP Registro.br → **404**, 21:44 [80] | Não registrado | idem | idem |
+| `shaihanbuenos.me` | `rdap.nic.me` **não resolve**; IANA não lista RDAP para `.me` [81, 82]; WHOIS `whois.nic.me` → "Domain not found." (21:53) [83]; RDAP Identity Digital → **404** "Object not found" [84] | Não registrado (WHOIS oficial; RDAP inexistente) | Porkbun US$ 17,27 [93]; Cloudflare suporta `.me` (DoMEn), preço **não verificado** [90] | — |
+
+Observações:
+
+- No RDAP, 404 significa que o nome não consta na base da registry [76–80]. Nomes reservados, bloqueados ou "premium" também podem não aparecer; a disponibilidade efetiva só se confirma no fluxo de compra (**não verificado** para estes nomes).
+- O host alternativo `rdap.nic.google` do ticket também não resolve; o servidor oficial da IANA para `.dev` é `https://pubapi.registry.google/rdap/` [81].
+- **Registro.br:** o site anuncia "Registro de domínio por R$ 40,00 por ano" [85]; as páginas de preços e regras são uma aplicação JavaScript sem conteúdo no HTML, por isso a tabela plurianual e o texto atual das regras ficam **não verificados**. A norma pública é a Resolução CGI.br/RES/2008/008/P: registro para entidades que "funcionem legalmente no País", profissionais liberais e pessoas físicas (art. 2º); pessoa física informa "nome completo" e "número do CPF" (art. 4º, I, b); nome com "no mínimo 2 (dois) e no máximo 26 (vinte e seis) caracteres", letras, números, hífen e acentuados, sem começar/terminar com hífen (art. 3º); empresas estrangeiras só com registro provisório e procurador no país (art. 6º) [86]. A Resolução 2017/031 alterou só os arts. 10–14 (liberação de domínios cancelados) [87]. `.br` não consta na lista de TLDs do Cloudflare Registrar [90].
+- **Cloudflare Registrar:** "you pay the registry and ICANN list price with no markup", inclusive em renovações e transferências [88, 89]; suporta `.com` (Verisign), `.dev` (Google Registry) e `.me` (DoMEn) [90].
+- **Porkbun:** preços em USD, "include ICANN fees", com WHOIS privacy e certificado Let's Encrypt inclusos [93]. Tributos brasileiros sobre compra em cartão internacional: **não verificado**.
+- **`.dev`:** gerido pelo Google Registry; "Pricing is set by individual registrars and can vary" [94].
+
+## Combinações sugeridas (opinião)
+
+Interpretação deste levantamento a partir dos fatos acima, para uma pessoa com backend forte, React intermediário e intenção de aprender frontend.
+
+**A. Astro + Cloudflare Workers (static assets) + `shaihanbuenos.dev` via Cloudflare Registrar** — ≈ US$ 12–13/ano só de domínio (valor exato **não verificado**).
+Prós: i18n, coleções, MDX, RSS e imagens resolvidos pelo framework [7, 10–13]; requisições estáticas ilimitadas e gratuitas [59]; previews por branch [61]; DNS, registrar, HTTPS e hospedagem no mesmo painel [63, 64]; nenhuma cláusula de uso não comercial encontrada. React entra como ilha onde fizer sentido, o que serve ao aprendizado [15]. O `.dev` sinaliza perfil técnico e já nasce HTTPS-only [94].
+Contras: exige DNS na Cloudflare [63, 89]; configuração via Wrangler em vez de só UI, e a Cloudflare empurra novos projetos para Workers [53, 65]; preço em dólar.
+
+**B. Astro + GitHub Pages + `shaihanbuenos.com.br` via Registro.br** — R$ 40/ano [85].
+Prós: tudo no GitHub, deploy por Actions com guia oficial [44]; domínio em reais; rotas `/pt-br/` e `/en/` funcionam como diretórios estáticos [8]. Boa opção se a prioridade for simplicidade e custo em BRL.
+Contras: sem previews por PR [39]; redirect da raiz por meta refresh/JS [9]; limites soft de 100 GB/mês e 10 builds/h (o segundo não se aplica a Actions) [40]; `.com.br` comunica menos para público internacional (opinião).
+
+**C. Next.js (export estático) + Vercel Hobby + `shaihanbuenos.dev` via Porkbun** — US$ 8,75 no 1º ano, US$ 12,87 depois [93].
+Prós: aproveita o React já conhecido [16]; deploy zero-config e previews por PR [51, 48]; repositório pessoal é compatível com Hobby [49].
+Contras: o export remove `Proxy`, `redirects` e o loader de imagem padrão, então i18n fica manual, a raiz não redireciona por idioma e imagens ficam `unoptimized` ou em serviço externo [17, 19, 21]; MDX sem frontmatter nativo [20]; Hobby vale só enquanto o site não tiver anúncios nem trabalho pago [47]. É a combinação mais produtiva e a que menos ensina frontend novo.
+
+Netlify Free seria alternativa a GitHub Pages em B (com previews por PR), mas 15 créditos por deploy de produção em 300 mensais limita a cadência de publicação [69].
+
+## Fontes
+
+Todas acessadas em 2026-11-07.
+
+Frameworks
+1. https://registry.npmjs.org/astro — `dist-tags.latest` 7.4.7 e datas em `time`
+2. https://registry.npmjs.org/next
+3. https://registry.npmjs.org/@11ty%2Feleventy
+4. https://registry.npmjs.org/@sveltejs%2Fkit
+5. https://registry.npmjs.org/nuxt
+6. https://api.github.com/repos/gohugoio/hugo/releases/latest → https://github.com/gohugoio/hugo/releases/tag/v0.169.0
+7. https://docs.astro.build/en/guides/internationalization/
+8. https://docs.astro.build/en/reference/configuration-reference/
+9. https://docs.astro.build/en/guides/routing/
+10. https://docs.astro.build/en/guides/content-collections/
+11. https://docs.astro.build/en/guides/integrations-guide/mdx/
+12. https://docs.astro.build/en/recipes/rss/
+13. https://docs.astro.build/en/guides/images/
+14. https://docs.astro.build/en/basics/astro-components/
+15. https://docs.astro.build/en/guides/framework-components/
+16. https://nextjs.org/docs
+17. https://nextjs.org/docs/app/guides/static-exports
+18. https://nextjs.org/docs/pages/guides/static-exports
+19. https://nextjs.org/docs/app/guides/internationalization
+20. https://nextjs.org/docs/app/guides/mdx
+21. https://nextjs.org/docs/app/api-reference/components/image
+22. https://github.com/nextjs/deploy-github-pages
+23. https://gohugo.io/content-management/multilingual/
+24. https://gohugo.io/configuration/languages/
+25. https://gohugo.io/content-management/formats/
+26. https://gohugo.io/templates/rss/
+27. https://gohugo.io/content-management/image-processing/
+28. https://gohugo.io/templates/introduction/
+29. https://gohugo.io/about/introduction/
+30. https://gohugo.io/installation/macos/
+31. https://www.11ty.dev/docs/plugins/i18n/
+32. https://www.11ty.dev/docs/languages/mdx/
+33. https://www.11ty.dev/docs/plugins/rss/
+34. https://www.11ty.dev/docs/plugins/image/
+35. https://www.11ty.dev/docs/languages/
+36. https://svelte.dev/docs/kit/adapter-static
+37. https://i18n.nuxtjs.org/
+38. https://tailwindcss.com/docs/dark-mode
+
+Hospedagem
+39. https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages
+40. https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits
+41. https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/about-custom-domains-and-github-pages
+42. https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https
+43. https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-custom-404-page-for-your-github-pages-site
+44. https://docs.astro.build/en/guides/deploy/github/
+45. https://vercel.com/pricing
+46. https://vercel.com/docs/limits
+47. https://vercel.com/docs/limits/fair-use-guidelines
+48. https://vercel.com/docs/deployments/environments
+49. https://vercel.com/docs/git
+50. https://vercel.com/docs/domains/working-with-ssl
+51. https://vercel.com/docs/frameworks/full-stack/nextjs
+52. https://docs.astro.build/en/guides/deploy/vercel/
+53. https://developers.cloudflare.com/pages/
+54. https://developers.cloudflare.com/pages/platform/limits/
+55. https://developers.cloudflare.com/pages/configuration/preview-deployments/
+56. https://developers.cloudflare.com/pages/configuration/custom-domains/
+57. https://developers.cloudflare.com/pages/framework-guides/deploy-an-astro-site/
+58. https://developers.cloudflare.com/pages/framework-guides/nextjs/deploy-a-static-nextjs-site/
+59. https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/
+60. https://developers.cloudflare.com/workers/platform/pricing/
+61. https://developers.cloudflare.com/workers/ci-cd/builds/
+62. https://developers.cloudflare.com/workers/ci-cd/builds/limits-and-pricing/
+63. https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
+64. https://developers.cloudflare.com/ssl/edge-certificates/universal-ssl/
+65. https://developers.cloudflare.com/workers/framework-guides/web-apps/astro/
+66. https://docs.astro.build/en/guides/deploy/cloudflare/
+67. https://www.netlify.com/pricing/
+68. https://www.netlify.com/pricing/personal-vs-free/
+69. https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/
+70. https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/billing-faq-for-credit-based-plans/
+71. https://docs.netlify.com/deploy/deploy-types/deploy-previews/
+72. https://docs.netlify.com/manage/domains/secure-domains-with-https/https-ssl/
+73. https://docs.netlify.com/build/frameworks/overview/
+74. https://docs.netlify.com/build/frameworks/framework-setup-guides/nextjs/overview/
+75. https://docs.astro.build/en/guides/deploy/netlify/
+
+Domínios
+76. https://rdap.verisign.com/com/v1/domain/shaihanbuenos.com — HTTP 404
+77. https://pubapi.registry.google/rdap/domain/shaihanbuenos.dev — HTTP 404
+78. https://pubapi.registry.google/rdap/domain/shaihan.dev — HTTP 404
+79. https://rdap.registro.br/domain/shaihanbuenos.com.br — HTTP 404
+80. https://rdap.registro.br/domain/shaihan.com.br — HTTP 404
+81. https://data.iana.org/rdap/dns.json — bootstrap RDAP da IANA (publicação 2026-10-28); sem entrada para `me`
+82. https://www.iana.org/domains/root/db/me.html — WHOIS `whois.nic.me`; RDAP "-"
+83. WHOIS `whois.nic.me` (porta 43), consulta `shaihanbuenos.me` → "Domain not found.", 2026-11-07T21:53:47Z
+84. https://rdap.identitydigital.services/rdap/domain/shaihanbuenos.me — HTTP 404 "Object not found"
+85. https://registro.br/ e https://registro.br/precos/ — meta description "Registro de domínio por R$ 40,00 por ano"; conteúdo das páginas carregado via JavaScript
+86. https://cgi.br/resolucoes/documento/2008/008/ — Resolução CGI.br/RES/2008/008/P
+87. https://cgi.br/resolucoes/documento/2017/031/ — Resolução CGI.br/RES/2017/031
+88. https://www.cloudflare.com/products/registrar/
+89. https://developers.cloudflare.com/registrar/faq/
+90. https://www.cloudflare.com/tld-policies/
+91. https://www.sec.gov/Archives/edgar/data/0001014473/000101447326000039/vrsn-20260930.htm — Verisign, Form 10-Q (3º tri. 2026)
+92. https://www.icann.org/en/contracted-parties/accredited-registrars/how-to-become-a-registrar/registrar-fees-10-08-2018-en — atualizado em 28/07/2025
+93. https://porkbun.com/products/domains (também https://porkbun.com/tld/com, https://porkbun.com/tld/dev, https://porkbun.com/tld/me)
+94. https://www.registry.google/domains/dev/ — destino do redirecionamento 301 de https://get.dev/
+95. https://www.joaoac.com/pt-BR e https://www.yudiganeko.com/ — caminhos de assets `/_astro/` e `/_next/static` no HTML servido
