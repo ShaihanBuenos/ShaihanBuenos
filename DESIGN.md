@@ -139,7 +139,7 @@ components:
 
 O site é a planta de um chip desenhada numa folha clara. Uma moldura de um fio cerca a página inteira. O menu são os contatos presos na borda de cima da moldura. Dentro dela, uma grade de módulo fixo organiza blocos retangulares chapados e translúcidos, em cobre, safira e cinza, que escurecem onde se cruzam. O nome fica no núcleo, em grotesca leve e muito grande. As legendas são miúdas, em monoespaçado e caixa alta, como os designadores de uma folha de dados.
 
-O sistema é plano e seco. Não há cantos arredondados, sombra nem degradê. A profundidade vem só da sobreposição das cores. Há pouca animação, por escolha do dono: o único movimento é a troca instantânea de cor no bloco em foco. As páginas de leitura mantêm a moldura e a paleta, mas largam a planta e a grade: ali o texto manda, com estilo contido.
+O sistema é plano e seco. Não há cantos arredondados, sombra nem degradê. A profundidade vem só da sobreposição das cores. O movimento segue o sistema "Traçado", descrito em **Motion**: a planta é roteada na abertura e fica viva depois, sem deixar de ser plana. As páginas de leitura mantêm a moldura e a paleta, mas largam a planta e a grade: ali o texto manda, com estilo contido.
 
 O tema é só claro. Uma variante escura, "Noturno", foi mostrada e não foi decidida; não a implemente sem decisão. A página inicial e a página de história de projeto passaram pela revisão final. As páginas de leitura ainda não foram revisadas, então as regras delas são provisórias.
 
@@ -148,7 +148,8 @@ O tema é só claro. Uma variante escura, "Noturno", foi mostrada e não foi dec
 - Grade de 26 módulos que manda em todo o alinhamento.
 - Blocos chapados e translúcidos em cobre, safira e cinza, com mistura por multiplicação.
 - Nome e títulos em grotesca leve; legendas em monoespaçado miúdo.
-- Zero raio, zero sombra, zero degradê, zero transição.
+- Zero raio, zero sombra, zero degradê.
+- Movimento "Traçado": trilhas de um fio, blocos que acendem e pulsos nas trilhas.
 - Páginas de leitura em coluna única, sem planta.
 
 ## Colors
@@ -224,13 +225,15 @@ A página tem uma margem lateral (`gutter`) e uma única moldura, que é um cont
 **Leitura.** As páginas de leitura têm uma coluna só, centrada, com até 41rem. Não têm planta, grade ao fundo nem blocos coloridos de área. A lista de textos usa uma coluna estreita de 6.5rem para a data e o resto para o título.
 
 **Responsivo.**
-- Até 1000px, a planta deixa de ser grade e vira uma pilha: os blocos empilham com recuos alternados de um módulo de 26px e sobreposição de 26px, e os contatos do menu viram uma faixa que rola na horizontal.
+- Até 1000px, a planta do celular: uma grade própria de 10 colunas por 22 linhas que cabe na primeira tela. O núcleo ocupa o topo; pesquisa, método e experiência se cruzam abaixo dele; os três projetos fecham a planta numa fileira. As células de saída somem, porque o menu já leva a Textos e Estudos. Os contatos do menu viram uma faixa que rola na horizontal.
 - Até 800px, as seções e o topo da história de projeto passam para uma coluna, com recuo lateral de 16px.
 - Até 700px, o diagrama largo dá lugar a uma versão em pé do mesmo diagrama.
 - Até 560px, listas de definição, linha do tempo e lista de textos passam para uma coluna.
 
 ### Named Rules
 **A Regra do Módulo.** Posição e tamanho dentro da moldura saem do módulo de 1/26 ou de `cqw`. Um bloco da planta ocupa células inteiras da grade.
+
+**A Regra do Celular Primeiro.** Cada página e cada peça é desenhada primeiro na largura do celular (390px) e depois ampliada para telas maiores. O CSS parte do celular e acrescenta as telas maiores com `min-width`. Nada depende de passar o mouse, e todo alvo de toque tem pelo menos 44px. A lista em **Responsivo** descreve o protótipo atual, feito do computador para baixo; a construção inverte essa ordem.
 
 **A Regra da Moldura Única.** Cada página tem uma moldura só, com os contatos em cima e os dentes embaixo. Nada de moldura dentro de moldura para agrupar conteúdo; quem separa são os fios e os fundos de seção.
 
@@ -242,6 +245,23 @@ O único `box-shadow` do sistema é um contorno interno de 1px (`inset 0 0 0 1px
 
 ### Named Rules
 **A Regra da Folha Plana.** Nada flutua. Sem sombra projetada, sem desfoque, sem degradê de cor. Se algo precisa se destacar, muda de cor ou ganha um fio.
+
+## Motion
+
+O sistema de movimento se chama "Traçado": o chip é roteado diante de quem chega e continua vivo depois. Ele substitui o "pouca animação" da primeira versão deste documento. Os tempos abaixo vêm do protótipo e são ponto de partida; o ajuste fino é feito com o site rodando num celular.
+
+- **Abertura (cerca de 1,8 s, só na página inicial):** trilhas de 1.5px em tinta são desenhadas da moldura até os blocos, em cerca de 0,7 s cada, com um nó quadrado de 7px na chegada. Cada bloco se revela de cima para baixo em cor cheia (`h-`) e assenta na camada (`l-`), em 0,6 s, na ordem pesquisa, método, experiência, projetos. O núcleo entra primeiro, da esquerda para a direita, e o nome surge letra a letra, com 55 ms entre as letras.
+- **Pulsos:** depois da abertura, um traço curto de 14px, em cobre ou safira, percorre cada trilha a cada 2,6 s. É o único movimento contínuo do site.
+- **Rolagem:** uma barra de cobre de 5px na borda esquerda da moldura cresce com o progresso da página. Cada seção se revela uma vez ao entrar na tela; as seções com fundo colorido preenchem da esquerda para a direita em 0,7 s, e as marcas de projeto se revelam de cima para baixo.
+- **Troca de página:** o bloco do projeto tocado vira o painel da marca na história do projeto, em 0,45 s; o resto da página esmaece. As páginas de leitura recebem só o esmaecer.
+- **Curva:** `cubic-bezier(.3, .6, .2, 1)` para trilhas e blocos, `cubic-bezier(.2, .7, .1, 1)` para o que entra na tela.
+
+### Named Rules
+**A Regra do Movimento Reduzido.** Com `prefers-reduced-motion: reduce`, não há abertura, pulso, revelação nem troca animada: a página aparece pronta. Nenhuma informação depende de animação.
+
+**A Regra do Movimento Leve.** Só `transform`, `clip-path`, `opacity` e o traço das trilhas são animados. Sem biblioteca de movimento nem de 3D; o protótipo usa CSS e cerca de 6 kB de JavaScript, e esse é o teto.
+
+**A Regra da Folha Viva, mas Plana.** O movimento não traz sombra, desfoque, perspectiva nem elasticidade. As trilhas são fios e os pulsos são traços chapados.
 
 ## Shapes
 
@@ -263,7 +283,7 @@ Os degradês lineares que existem no código só desenham a grade e os dentes, c
 ### Contatos (menu e rodapé)
 Pequenos retângulos com fio de 1.5px, como os contatos na borda de um chip.
 - **Forma:** canto vivo, `padding: 6px 12px`, texto em fonte de texto a .84rem (menu) ou .9rem (rodapé e lista de contato), sem sublinhado.
-- **Menu:** os contatos ficam centrados sobre a borda de cima da moldura, com fundo de chão. Acima de 1000px, cada um se alinha a colunas da grade de 26 módulos, e o de idioma fica no fim.
+- **Menu:** os contatos ficam centrados sobre a borda de cima da moldura, com fundo de chão. Acima de 1000px, cada um se alinha a colunas da grade de 26 módulos, e o de idioma fica no fim, no canto superior direito. O contato de idioma mostra "EN" e "PT" lado a lado, com o idioma atual no estado de página atual e o outro como link. No celular ele fica sempre visível no canto superior direito, fora de qualquer menu recolhido ([Descoberta: feed, buscadores e redes sociais](https://github.com/ShaihanBuenos/ShaihanBuenos/issues/15)).
 - **Hover e página atual:** fundo de tinta e texto de folha, com troca instantânea.
 - **Item sem link:** o mesmo retângulo, sem estado de hover.
 
@@ -274,7 +294,7 @@ O componente de assinatura. Cada bloco é um link que ocupa células inteiras da
 - **Conteúdo:** uma legenda em monoespaçado e um título em fonte de display, peso 400.
 - **Projetos:** blocos empilhados numa coluna, separados por uma faixa da cor da folha.
 - **Células de saída:** sem cor, com fio tracejado de 1.5px e só o título.
-- **Foco e ponteiro:** o bloco ativo passa à cor cheia (`h-`); todos os outros perdem a cor e ficam só com um contorno interno de 1px. A troca é instantânea, sem transição. O contorno de foco do teclado fica 4px para dentro do bloco.
+- **Foco e ponteiro:** o bloco ativo passa à cor cheia (`h-`); todos os outros perdem a cor e ficam só com um contorno interno de 1px. No toque, o mesmo estado aparece enquanto o dedo está sobre o bloco. O contorno de foco do teclado fica 4px para dentro do bloco.
 
 ### Núcleo
 O retângulo opaco do nome: fundo de chão, fio de 1.5px, o nome em Display, o rótulo em peso 500 e a frase em tinta suave. Não é link e não recua quando outro bloco ganha foco.
@@ -321,7 +341,8 @@ O retângulo opaco do nome: fundo de chão, fio de 1.5px, o nome em Display, o r
 - **Faça** cada página dentro de uma única moldura de 1.5px, com os contatos do menu sobre a borda de cima e os dentes embaixo.
 - **Faça** o alinhamento sair do módulo de 1/26 da moldura e use `cqw` para medidas internas.
 - **Faça** texto em tinta ou tinta suave; links em safira sobre a folha e em tinta sobre fundo colorido.
-- **Faça** as trocas de estado instantâneas: cor cheia no ativo, contorno nos demais.
+- **Faça** o estado ativo com cor cheia no bloco ativo e contorno nos demais, também no toque.
+- **Faça** todo movimento sumir quando o sistema pede movimento reduzido.
 - **Faça** as páginas de leitura em coluna única de até 41rem, com a moldura e a paleta, sem planta e sem grade.
 - **Faça** a legenda em monoespaçado carregar um dado (estado, data, tipo) e vir depois do título.
 - **Faça** o foco do teclado sempre visível: 2px em safira.
@@ -329,7 +350,8 @@ O retângulo opaco do nome: fundo de chão, fio de 1.5px, o nome em Display, o r
 
 ### Don't:
 - **Não** use cantos arredondados, sombra projetada nem degradê de cor.
-- **Não** acrescente transições ou animações além da troca de cor no foco. O dono pediu pouca animação.
+- **Não** acrescente movimento fora do sistema "Traçado", nem biblioteca de movimento ou de 3D.
+- **Não** anime o texto das páginas de leitura.
 - **Não** escreva texto em cobre. O cobre é área, quadradinho ou marcador.
 - **Não** use as cores cheias (`h-`) em repouso, nem as camadas translúcidas (`l-`) como fundo de seção.
 - **Não** leve a planta, a grade ou blocos coloridos de área para as páginas de leitura.

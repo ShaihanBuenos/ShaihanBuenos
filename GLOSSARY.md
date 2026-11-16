@@ -44,6 +44,10 @@ _Evitar_: tagline, slogan, resumo; bio (é o parágrafo)
 O parágrafo curto, em primeira pessoa, que conta onde Shaihan trabalha hoje, de onde vem o lado de IA e o que está estudando. Completa a frase de apresentação, não a substitui.
 _Evitar_: sobre mim, perfil, resumo
 
+**README do perfil**:
+O texto, só em inglês, que aparece na página do perfil de Shaihan no GitHub. Diz quem ele é e aponta para o site; o que está em andamento fica no site, não nele.
+_Evitar_: README do site, documentação do repo (as instruções de desenvolvimento ficam em outro arquivo)
+
 ### Experiência
 
 **Experiência**:
@@ -149,5 +153,37 @@ Indicação, na lista de textos, de que um texto está no outro idioma do site.
 _Evitar_: etiqueta, selo
 
 **Botão de idioma**:
-O link, presente em todas as páginas, que leva ao equivalente da página no outro idioma.
+O par "EN" e "PT" no canto superior direito de todas as páginas, com o idioma atual marcado e o outro como link para o equivalente da página.
 _Evitar_: seletor de idioma, toggle
+
+### Descoberta
+
+**Feed**:
+A lista dos textos que um leitor de feeds acompanha para saber de textos novos. Há um por idioma, e cada um traz todos os textos uma única vez.
+_Evitar_: RSS (é o formato), newsletter (é aviso por e-mail, que o site não tem)
+
+**Resumo de uma linha**:
+A frase que acompanha o título de um texto na lista de textos, no feed, nos buscadores e nas redes sociais.
+_Evitar_: descrição, subtítulo, chamada
+
+**Descrição da página**:
+A frase que buscadores e redes sociais mostram de uma página fixa ou de uma história do projeto. Existe nos dois idiomas.
+_Evitar_: meta description, resumo (é dos textos)
+
+**Imagem de compartilhamento**:
+A imagem que aparece no cartão quando alguém cola um endereço do site numa rede social ou numa conversa.
+_Evitar_: OG image, capa, thumbnail
+
+### Publicação e manutenção
+
+**Rascunho**:
+Um texto ainda não publicado. Shaihan o vê enquanto escreve, e ele não aparece no site.
+_Evitar_: draft, texto oculto
+
+**Conferência**:
+A revisão que Shaihan faz a cada três meses para confirmar que as páginas fixas continuam certas e iguais nos dois idiomas. A lista de estudos mostra a data da última.
+_Evitar_: revisão trimestral, auditoria
+
+**Revisão de conteúdo**:
+Mudança num texto publicado que altera o que ele diz. Preenche a data de atualização e sai no original e na tradução juntos. Corrigir erro de digitação não é revisão de conteúdo.
+_Evitar_: edição, update

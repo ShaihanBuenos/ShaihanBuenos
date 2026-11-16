@@ -50,7 +50,7 @@ A prova da IA vem do paper e dos projetos, não dos empregos.
 - Início, Projetos, Textos, Estudos, Pesquisa e Sobre, mais uma página por projeto e uma por texto.
 - A página inicial é um resumo: abertura, chamada do paper, projetos, textos recentes, estudos em andamento e bio.
 - Sobre reúne a bio, a experiência, a formação e o contato.
-- Menu: Projetos · Textos · Estudos · Pesquisa · Sobre, mais o botão de idioma.
+- Menu: Projetos · Textos · Estudos · Pesquisa · Sobre, mais o botão de idioma ("EN" e "PT"), no canto superior direito.
 
 **Regra de edição:** editar o site tem de ser fácil. Trocar um texto, um estado, uma conquista ou um status é mudar um arquivo de conteúdo, não código de página. A ordem de qualquer lista é conteúdo. Acrescentar ou tirar um projeto, um texto ou um estudo é criar ou apagar um arquivo.
 
@@ -104,4 +104,4 @@ A prova da IA vem do paper e dos projetos, não dos empregos.
 ## Accessibility & Inclusion
 
 - O visitante que avalia pode não ter conta no GitHub nem ler português: as páginas fixas existem em inglês, e nada essencial depende de login.
-- O site precisa funcionar bem no celular, por onde chega quem abre um link do LinkedIn.
+- O site é feito primeiro para o celular, por onde chega quem abre um link do LinkedIn. A versão de celular é desenhada e conferida antes da de computador, com o mesmo cuidado, e nenhum conteúdo existe só na tela grande.
