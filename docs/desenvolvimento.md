@@ -43,9 +43,10 @@ A saída é só de arquivos estáticos.
 
 | Caminho | O que guarda |
 |---|---|
-| `astro.config.ts` | A configuração do Astro: endereço do site, idiomas e formato da saída. |
+| `astro.config.ts` | A configuração do Astro: endereço do site, idiomas, formato da saída e o arquivo `_headers`. |
 | `src/configuracao.ts` | A chave do lançamento (ver abaixo). |
 | `src/idiomas.ts` | Os dois idiomas e o `lang` de cada um. |
+| `src/feed.ts` | O feed de cada idioma, ainda sem textos. |
 | `src/layouts/Pagina.astro` | O documento comum a todas as páginas. |
 | `src/pages/` | As páginas em inglês, na raiz. |
 | `src/pages/pt-br/` | As páginas em português. |
@@ -57,16 +58,19 @@ O inglês fica na raiz e o português em `/pt-br`. Cada página fixa existe nos 
 
 Uma página nova precisa de um arquivo em `src/pages/` e outro em `src/pages/pt-br/`. O `lang` sai sozinho, pelo lugar do arquivo.
 
-O "não encontrado" tem uma página por idioma: `404.html` na raiz e `pt-br/404.html`. Quem escolhe qual mostrar é a hospedagem, que procura o `404.html` mais próximo do endereço pedido.
+O "não encontrado" tem uma página por idioma: `404.html` na raiz e `pt-br/404.html`. Quem escolhe qual mostrar é a hospedagem. Na Cloudflare, isso pede a opção que procura o `404.html` mais próximo do endereço pedido (`not_found_handling = "404-page"`), que entra com a configuração da prévia, na issue #19. Rodando com `npm run dev`, a página em português já aparece para endereços sob `/pt-br`.
 
 ## Não indexar até o lançamento
 
-Toda página sai com a marca `noindex`. Quem manda nisso é uma chave só, em `src/configuracao.ts`:
+Até o lançamento, nada do site pode ser indexado. A construção faz duas coisas:
+
+- toda página sai com `<meta name="robots" content="noindex">`;
+- a pasta `dist/` ganha um arquivo `_headers`, que a Cloudflare lê para mandar o cabeçalho `X-Robots-Tag: noindex` em todos os arquivos, inclusive nos feeds.
+
+Quem manda nas duas é uma chave só, em `src/configuracao.ts`:
 
 ```ts
 export const PODE_SER_INDEXADO = false;
 ```
 
-No dia do lançamento, troque para `true`. O teste que confere a marca passa a falhar e sai junto.
-
-Os feeds (`/rss.xml` e `/pt-br/rss.xml`) são XML e não levam essa marca.
+No dia do lançamento, troque para `true`. Os dois testes de não indexar passam a falhar e saem junto.

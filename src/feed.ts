@@ -1,14 +1,11 @@
 import type { APIContext } from "astro";
-import { type Idioma, LANG } from "./idiomas.ts";
+import { type Idioma, inicioDe, LANG_HTML } from "./idiomas.ts";
 
-const DESCRICAO: Record<Idioma, string> = {
+// Provisório: as frases do feed passam para os arquivos de conteúdo junto
+// com os itens.
+const SOBRE_O_FEED: Record<Idioma, string> = {
   en: "Writing by Shaihan Buenos",
   "pt-br": "Textos de Shaihan Buenos",
-};
-
-const INICIO: Record<Idioma, string> = {
-  en: "/",
-  "pt-br": "/pt-br",
 };
 
 // O feed de um idioma, ainda sem textos: só guarda o endereço. Os itens
@@ -20,9 +17,9 @@ export function feedVazio(idioma: Idioma, { site }: APIContext): Response {
 <rss version="2.0">
   <channel>
     <title>Shaihan Buenos</title>
-    <link>${new URL(INICIO[idioma], site).href}</link>
-    <description>${DESCRICAO[idioma]}</description>
-    <language>${LANG[idioma]}</language>
+    <link>${new URL(inicioDe(idioma), site).href}</link>
+    <description>${SOBRE_O_FEED[idioma]}</description>
+    <language>${LANG_HTML[idioma]}</language>
   </channel>
 </rss>
 `;

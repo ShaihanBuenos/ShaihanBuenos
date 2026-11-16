@@ -118,3 +118,10 @@ test("o README do perfil continua intacto", async () => {
     "933929015bdcf785d880bb165be68f3048131e4b6294dab9660defa7742f072f",
   );
 });
+
+// Feeds e outros arquivos que não são HTML não levam <meta>. Para eles a
+// hospedagem (Cloudflare) lê o arquivo _headers e manda o cabeçalho em tudo.
+test("o que não é página também sai marcado para não ser indexado", async () => {
+  const headers = await readFile(`${raiz}dist/_headers`, "utf8");
+  assert.match(headers, /^\/\*\n[ \t]+X-Robots-Tag: noindex$/m);
+});

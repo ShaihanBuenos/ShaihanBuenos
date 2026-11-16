@@ -6,11 +6,16 @@ export type Idioma = (typeof IDIOMAS)[number];
 
 export const IDIOMA_PADRAO: Idioma = "en";
 
-// O valor do atributo `lang` de cada idioma.
-export const LANG: Record<Idioma, string> = {
+// O valor do atributo `lang` do HTML para cada idioma.
+export const LANG_HTML: Record<Idioma, string> = {
   en: "en",
   "pt-br": "pt-BR",
 };
+
+// O endereço da página Início de cada idioma.
+export function inicioDe(idioma: Idioma): string {
+  return idioma === IDIOMA_PADRAO ? "/" : `/${idioma}`;
+}
 
 export function idiomaDe(locale: string | undefined): Idioma {
   const idioma = IDIOMAS.find((i) => i === locale);

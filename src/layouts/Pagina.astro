@@ -1,6 +1,6 @@
 ---
 import { PODE_SER_INDEXADO } from "../configuracao.ts";
-import { idiomaDe, LANG } from "../idiomas.ts";
+import { idiomaDe, LANG_HTML } from "../idiomas.ts";
 
 interface Props {
   titulo: string;
@@ -11,7 +11,7 @@ const idioma = idiomaDe(Astro.currentLocale);
 ---
 
 <!doctype html>
-<html lang={LANG[idioma]}>
+<html lang={LANG_HTML[idioma]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
