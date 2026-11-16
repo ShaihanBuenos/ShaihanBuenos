@@ -8,11 +8,13 @@ web
 
 ## Stack
 
-Não decidido. A escolha é do ticket [Stack, hospedagem, domínio e quem constrói](https://github.com/ShaihanBuenos/ShaihanBuenos/issues/11). A pergunta foi feita em 2026-11-15 e Shaihan preferiu deixá-la em aberto. O que já se sabe:
+Decidida em [Stack, hospedagem, domínio e quem constrói](https://github.com/ShaihanBuenos/ShaihanBuenos/issues/11):
 
-- A pesquisa em [Opções de stack, hospedagem e domínio](https://github.com/ShaihanBuenos/ShaihanBuenos/issues/5) apontou o Astro como o único candidato com dois idiomas, MDX, RSS e imagens nativos.
-- Shaihan quer construir o site numa linguagem nova para ele.
-- A stack precisa atender à regra de edição, em "Capabilities and Constraints".
+- Astro com TypeScript, saída estática, CSS puro. Sem Tailwind, sem React e sem biblioteca de movimento.
+- O código mora neste repo, público, ao lado do `README.md` do perfil.
+- Cloudflare para hospedagem, DNS e registro. Domínio `shaihanbuenos.dev`; contato por `hi@shaihanbuenos.dev`, como encaminhamento.
+- Agentes constroem; Shaihan dirige, revisa e aprova.
+- A stack atende à regra de edição, em "Capabilities and Constraints".
 
 ## Users
 
@@ -67,7 +69,9 @@ A prova da IA vem do paper e dos projetos, não dos empregos.
 
 **Terminologia:** os termos do site estão em `GLOSSARY.md`. Usar aqueles e evitar os que o glossário marca.
 
-**Não decidido:** stack, hospedagem e domínio; se o site tem foto de Shaihan; como o site é descoberto (feed, buscadores, redes).
+**Sem foto:** em Sobre entra um avatar em pixel art, nas cores do site.
+
+**Descoberta** (decidida em [Descoberta: feed, buscadores e redes sociais](https://github.com/ShaihanBuenos/ShaihanBuenos/issues/15)): um feed por idioma, descrição de uma linha por página, imagem de compartilhamento gerada, sem newsletter no lançamento.
 
 ## Brand Commitments
 
