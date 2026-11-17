@@ -1,7 +1,4 @@
 # configuração local e binários das skills
 .claude/
-# rascunhos e capturas do processo de design
-.impeccable/review/
-.impeccable/mocks/
-.impeccable/questions/
-.impeccable/hook.cache.json
+# sobras locais do processo de design, que foi para o repo do site
+.impeccable/
