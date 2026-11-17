@@ -1,6 +1,11 @@
-### Hi there, my name is Shaihan Buenos
-####  Full Stack Engineer with over 4 years of experience, focusing on backend development using Java, TypeScript, and JavaScript. My key activities include improving code coverage, conducting code reviews, and following up on backlog demands with Product Managers (PM) and Product Owners (PO). I am adept at resolving incidents in both production and non-production environments and addressing business requests and necessities. I am committed to developing solutions with best practices in mind, including clean code, architecture and design patterns, domain-driven design, and security patterns. My goal is to create scalable and efficient solutions. I also recognize the importance of thorough documentation for any application, ensuring clarity and ease of maintenance.
+# Shaihan Buenos
 
-####  As a Software Engineer at ADP Labs, I have predominantly focused on backend development, creating, testing, and maintaining APIs with various architecture and design patterns using the Java/Spring Framework. I utilize build automation tools such as Gradle and Maven, and I rely on observability and monitoring tools like Splunk, Dynatrace, and Spring Boot Admin. Additionally, I have frontend experience developing micro-frontends using WebComponents with technologies like TypeScript, Stencil, and Jest. I continually strive to improve my skills, learn best practices for software development, and support my teammates.   
+**Software Engineer focused on backend and AI**
 
-[<img src='https://cdn.jsdelivr.net/npm/simple-icons@3.0.1/icons/github.svg' alt='github' height='40'>](https://github.com/ShaihanBuenos)  [<img src='https://cdn.jsdelivr.net/npm/simple-icons@3.0.1/icons/linkedin.svg' alt='linkedin' height='40'>](https://www.linkedin.com/in/shaihanbuenos/)
+I build backend services and systems that use LLMs, and I write code with AI agents guided by specs.
+
+I'm a software engineer at ADP Labs in Porto Alegre, Brazil, where I work on backend services. The AI side comes from outside my job: I'm the first author of a paper published by IEEE on integrating LLMs into hypertension care, and I build my own projects with AI agents guided by specs.
+
+**[shaihanbuenos.dev](https://shaihanbuenos.dev)** · [Português](https://shaihanbuenos.dev/pt-br)
+
+[LinkedIn](https://www.linkedin.com/in/shaihanbuenos/) · hi@shaihanbuenos.dev
